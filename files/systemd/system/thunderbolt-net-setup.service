@@ -1,0 +1,12 @@
+[Unit]
+Description=Create Thunderbolt network connection profile
+Before=NetworkManager.service
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/etc/libexec/thunderbolt-net-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

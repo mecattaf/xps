@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+CONN_FILE='/etc/NetworkManager/system-connections/thunderbolt0.nmconnection'
+
+# Only create if it doesn't already exist
+if [ -f "${CONN_FILE}" ]; then
+    # Ensure permissions are correct even if file exists
+    chmod 0600 "${CONN_FILE}"
+    exit 0
+fi
+
+cat > "${CONN_FILE}" << 'EOF'
+[connection]
+id=thunderbolt0
+type=ethernet
+interface-name=thunderbolt0
+autoconnect=true
+autoconnect-priority=100
+
+[ipv4]
+method=manual
+addresses=10.99.0.2/24
+gateway=10.99.0.1
+dns=10.99.0.1
+
+[ipv6]
+method=disabled
+EOF
+
+chmod 0600 "${CONN_FILE}"

@@ -43,6 +43,7 @@ modules:
         - autologin.service
         - tailscaled.service
         - systemd-resolved.service
+        - thunderbolt-net-setup.service
       disabled: []
 
   - type: chezmoi
