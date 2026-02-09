@@ -109,7 +109,6 @@ install:
     - yt-dlp
     - yq
     # Sytem Portals
-    # - better-settings
     - dbus-daemon
     - dbus-tools
     - gsettings-desktop-schemas
@@ -139,10 +138,6 @@ install:
     - wshowkeys
     - wtype
     - xorg-x11-server-Xwayland
-    # Local AI functionality
-    - ollama
-    - ramalama
-    - whisper-cpp
     # added from ax-shell instructions
     - tesseract
     - webp-pixbuf-loader 
