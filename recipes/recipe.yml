@@ -57,14 +57,6 @@ modules:
     nofile-limits: true
     brew-analytics: false
 
-  - type: justfiles
-    include:
-        - setup.just
-
-#  - type: script
-#    scripts:
-#        - claude-code.sh
-
   - type: default-flatpaks
     configurations:
       - notify: true
