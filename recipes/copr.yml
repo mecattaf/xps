@@ -1,0 +1,7 @@
+type: dnf
+repos:
+  copr:
+    - scrollwm/packages
+install:
+  packages:
+    - scroll

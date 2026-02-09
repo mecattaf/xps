@@ -1,45 +1,83 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
 name: xps
-# description will be included in the image's metadata
-description: This is my personal OS image.
+description: turning a 2022 dell xps 13 9315 into a thin client
+base-image: ghcr.io/ublue-os/base-main
+image-version: 43
 
-# the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
+
+  - from-file: base.yml
+  - from-file: yum.yml
+  - from-file: copr.yml
+  - from-file: duo.yml
+  - from-file: dms.yml
 
   - type: dnf
-    repos:
-      copr:
-        - atim/starship
-    install:
-      packages:
-        - micro
-        - starship
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
         - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - firefox-langpacks
+        - virtualbox-guest-additions
+        - toolbox
+        - nvtop
+        - sway
+        - yggdrasil
+        - adcli 
+        - libdnf-plugin-subscription-manager 
+        - python3-subscription-manager-rhsm 
+        - subscription-manager 
+        - subscription-manager-rhsm-certificates 
+
+  - from-file: fonts.yml
+
+  - type: systemd
+    system:
+      enabled:
+        - sddm-boot.service
+        - enable-linger.service
+        - autologin.service
+        - tailscaled.service
+        - systemd-resolved.service
+      disabled: []
+
+  - type: chezmoi
+    repository: "https://github.com/mecattaf/dotfiles"
+    run-every: '1d'
+    wait-after-boot: '15m' # longer wait after first boot to run just setup all
+    disable-init: false
+    disable-update: false
+
+  - type: brew
+    nofile-limits: true
+    brew-analytics: false
+
+  - type: justfiles
+    include:
+        - setup.just
+
+#  - type: script
+#    scripts:
+#        - claude-code.sh
 
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+      - notify: true
+        scope: user
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+        install:
+          - com.google.Chrome
+          - it.mijorus.gearlever
+          - com.hunterwittenborn.Celeste
+          - it.mijorus.collector
+          - com.obsproject.Studio
+          - com.obsproject.Studio.Plugin.OBSVkCapture
+          - com.moonlight_stream.Moonlight
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: signing
