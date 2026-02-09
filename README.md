@@ -1,26 +1,16 @@
 # xps &nbsp; [![bluebuild build badge](https://github.com/mecattaf/xps/actions/workflows/build.yml/badge.svg)](https://github.com/mecattaf/xps/actions/workflows/build.yml)
+## bolt authorization
+[from claude]
+You have bolt in base.yml (good), and BIOS DMA protection is ON. When you first connect the USB-C cable, boltd will need to authorize the Framework Desktop as a Thunderbolt peer. First connection will require interactive authorization (either via boltctl enroll or a GUI prompt). After that, the device is remembered and auto-authorized on subsequent connections.
+You'll want to run boltctl enroll --policy auto <device-uuid> on first setup so future connections are hands-free. This is a one-time thing, not something to bake into the image.
+
 ## Installation
 
-To rebase an existing atomic Fedora installation to the latest build:
-
-- First rebase to the unsigned image, to get the proper signing keys and policies installed:
-  ```
-  rpm-ostree rebase ostree-unverified-registry:ghcr.io/mecattaf/xps:latest
-  ```
-- Reboot to complete the rebase:
-  ```
-  systemctl reboot
-  ```
-- Then rebase to the signed image, like so:
-  ```
-  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/mecattaf/xps:latest
-  ```
-- Reboot again to complete the installation
-  ```
-  systemctl reboot
-  ```
-
-The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
+To switch an existing Fedora Atomic installation to the latest build:
+```
+sudo bootc switch ghcr.io/mecattaf/xps:latest
+systemctl reboot
+```
 
 ## Verification
 
